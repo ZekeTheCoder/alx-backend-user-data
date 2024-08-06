@@ -2,7 +2,9 @@
 """ Basic Authentication module """
 
 import base64
+from typing import TypeVar
 from api.v1.auth.auth import Auth
+from models.user import User
 
 
 class BasicAuth(Auth):
@@ -63,3 +65,31 @@ class BasicAuth(Auth):
 
         # email and password as a tuple
         return user_credentials[0], user_credentials[1]
+
+    def user_object_from_credentials(self, user_email: str,
+                                     user_pwd: str) -> TypeVar('User'):
+        """Method that retrives User instance based on email & password"""
+
+        if user_email is None or not isinstance(user_email, str):
+            return None
+
+        if user_pwd is None or not isinstance(user_pwd, str):
+            return None
+
+        try:
+            # Search for the user by email
+            users = User.search({'email': user_email})
+
+            # Ensure users is a list
+            if not isinstance(users, list):
+                return None
+
+            # Check if the list is not empty and verify the password
+            if users and users[0].is_valid_password(user_pwd):
+                return users[0]
+
+        except Exception:
+            # If there's an exception (e.g., search fails), return None
+            return None
+
+        return None
