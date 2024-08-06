@@ -30,8 +30,7 @@ class Auth:
 
         # Check if path matches any pattern in excluded_paths
         for excluded_path in excluded_paths:
-            # If the excluded path ends with '*', match the path up to
-            # but not including '*'
+            # Check path starts with the excluded_path prefix (excluding '*')
             if excluded_path.endswith('*'):
                 if path.startswith(excluded_path[:-1]):
                     return False
