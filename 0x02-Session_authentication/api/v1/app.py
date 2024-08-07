@@ -35,7 +35,8 @@ def before_request() -> str:
     # paths that are not subject to authentication
     excluded_paths = ['/api/v1/status/',
                       '/api/v1/unauthorized/',
-                      '/api/v1/forbidden/']
+                      '/api/v1/forbidden/',
+                      '/api/v1/auth_session/login/']
 
     # Authentication Requirement Check
     if not (auth.require_auth(request.path, excluded_paths)):
@@ -44,8 +45,9 @@ def before_request() -> str:
     # Set the current user
     request.current_user = auth.current_user(request)
 
-    # Authorization Header Check
-    if (auth.authorization_header(request)) is None:
+    # Authorization Header or Session Cookie Check
+    if (auth.authorization_header(request) is None and
+            auth.session_cookie(request) is None):
         abort(401)
 
     # Current User Check
