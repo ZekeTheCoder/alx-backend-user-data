@@ -9,19 +9,34 @@ from api.v1.views import app_views
 from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
 from api.v1.auth.session_auth import SessionAuth
+from api.v1.auth.session_exp_auth import SessionExpAuth
 
+# Create an instance of the Flask application
 app = Flask(__name__)
+
+# Configure the Flask application to pretty-print JSON responses
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+
+# Register the Blueprint for API views
 app.register_blueprint(app_views)
+
+# Enable Cross-Origin Resource Sharing (CORS) for the API routes
+# This allows requests from any origin (useful for development)
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
+# Initialize the authentication variable
 auth = None
 
+# Get the authentication type from environment variables
 auth_type = getenv('AUTH_TYPE')
+
+# Select the authentication method based on the environment variable
 if auth_type == 'basic_auth':
     auth = BasicAuth()  # instance of BasicAuth
 elif auth_type == "session_auth":
     auth = SessionAuth()  # instance of SessionAuth
+elif auth_type == 'session_exp_auth':
+    auth = SessionExpAuth()  # instance of SessionExpAuth
 else:
     auth = Auth()  # Default Auth
 
