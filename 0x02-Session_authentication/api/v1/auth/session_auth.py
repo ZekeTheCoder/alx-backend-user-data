@@ -48,7 +48,8 @@ class SessionAuth(Auth):
         Args:
             request: The request object to extract the session cookie from.
         Returns:
-            User: User instance associated with the session ID if found, otherwise
+            User: User instance associated with the session ID if found,
+            otherwise None
         """
         # Get the session ID from the request's cookies
         session_id = self.session_cookie(request)
