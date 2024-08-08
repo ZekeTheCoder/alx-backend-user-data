@@ -53,3 +53,22 @@ def login() -> str:
     # Catches any exceptions and returns a 500 error with exception message.
     except Exception as e:
         return jsonify({"error": str(e)}), 500  # server error with message
+
+
+@app_views.route('/auth_session/logout', methods=['DELETE'])
+def logout():
+    """
+    Handles the logout request by removing the user session.
+
+    Returns:
+        : A JSON response with an empty dictionary and status code 200
+        on success, otherwise an error response with status code 404.
+    """
+    from api.v1.app import auth
+
+    # Attempt to destroy the session using the auth object
+    if not auth.destroy_session(request):
+        abort(404)
+
+    # Return an empty JSON response indicating successful logout
+    return jsonify({}), 200
