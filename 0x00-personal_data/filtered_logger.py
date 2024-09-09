@@ -65,3 +65,26 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
         database=os.environ.get('PERSONAL_DATA_DB_NAME', 'root'),
         user=os.environ.get('PERSONAL_DATA_DB_USERNAME'),
         password=os.environ.get('PERSONAL_DATA_DB_PASSWORD', ''))
+
+
+def main():
+    """Obtain a database connection using get_db, retrieves all rows
+                from the users table and logs each row with filtered data."""
+    logger = get_logger()
+    db_connection = get_db()
+    cursor = db_connection.cursor(dictionary=True)
+
+    query = "SELECT * FROM users;"
+    cursor.execute(query)
+    rows = cursor.fetchall()
+
+    for row in rows:
+        log_message = "; ".join(f"{key}={value}" for key, value in row.items())
+        logger.info(log_message)
+
+    cursor.close()
+    db_connection.close()
+
+
+if __name__ == "__main__":
+    main()
