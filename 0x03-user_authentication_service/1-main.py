@@ -12,7 +12,7 @@ from user import User
 # logging.getLogger('sqlalchemy').setLevel(logging.ERROR)
 # logging.getLogger('sqlalchemy.engine').setLevel(logging.ERROR)
 # logging.getLogger('sqlalchemy.pool').setLevel(logging.ERROR)
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
 
 my_db = DB()
 
