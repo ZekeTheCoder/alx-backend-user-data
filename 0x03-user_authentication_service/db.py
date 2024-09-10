@@ -49,11 +49,25 @@ class DB:
         return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
-        """Update the user’s attributes as passed in the method’s
-        arguments then commit changes to the database."""
+        """Update the user with the given user_id using the provided keyword arguments."""
+        valid_attributes = {'email', 'hashed_password',
+                            'session_id', 'reset_token'}
+
+        if not isinstance(user_id, int):
+            raise ValueError("User ID must be an integer.")
+
         user = self.find_user_by(id=user_id)
+        invalid_args = set(kwargs.keys()) - valid_attributes
+        if invalid_args:
+            raise ValueError(
+                f"Invalid argument(s) provided: {', '.join(invalid_args)}")
+
         for key, value in kwargs.items():
-            if not hasattr(user, key):
-                raise ValueError
             setattr(user, key, value)
-        self._session.commit()
+
+        try:
+            self._session.commit()
+        except Exception as e:
+            self._session.rollback()
+            raise InvalidRequestError(
+                f"An error occurred while updating the user: {e}") from e

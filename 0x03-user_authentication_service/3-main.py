@@ -20,5 +20,19 @@ print(user.id)
 try:
     my_db.update_user(user.id, hashed_password='NewPwd')
     print("Password updated")
-except ValueError:
-    print("Error")
+except ValueError as e:
+    print(f"Error: {e}")
+
+try:
+    my_db.update_user(user.id, hashed_password='NewhashedPwd',
+                      session_id='thavababg')
+    print("session_id updated")
+except ValueError as e:
+    print(f"Error: {e}")
+
+try:
+    my_db.update_user(user.id, jwt='user.id', hashed_password='NewhashedPwd',
+                      reset_token='token_id')
+    print("Password updated")
+except ValueError as e:
+    print(f"Error: {e}")
