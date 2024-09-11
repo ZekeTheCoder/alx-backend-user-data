@@ -33,7 +33,8 @@ def main():
     # Log out the user by deleting the session
     response = requests.delete(
         'http://localhost:5000/sessions',
-        cookies={'session_id': session_id}
+        cookies={'session_id': session_id},
+        timeout=60  # in seconds
     )
 
     # Print the response status code
