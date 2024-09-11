@@ -2,11 +2,11 @@
 """
 Auth class for managing user registration and authentication.
 """
+import uuid
 import bcrypt
 from sqlalchemy.orm.exc import NoResultFound
 from db import DB
 from user import User
-import uuid
 
 
 def _generate_uuid() -> str:
@@ -20,8 +20,8 @@ def _hash_password(password: str) -> bytes:
     """ Hashes the given password using bcrypt and returns the salted,
                 hashed password in bytes.
     """
-    salt = bcrypt.gensalt()
     encrypted = password.encode('utf-8')
+    salt = bcrypt.gensalt()
     return bcrypt.hashpw(encrypted, salt)
 
 
@@ -50,3 +50,17 @@ class Auth:
             return False
         return bcrypt.checkpw(password.encode('utf-8'),
                               user.hashed_password)
+
+    def create_session(self, email: str) -> str:
+        """
+        Create a session for the user with the given email and return the 
+                                session ID or None If the user is not found.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return None
+
+        session_id = _generate_uuid()
+        self._db.update_user(user.id, session_id=session_id)
+        return session_id
