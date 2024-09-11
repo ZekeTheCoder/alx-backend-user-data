@@ -73,7 +73,21 @@ def logout():
     if user is None:
         abort(403)
         AUTH.destroy_session(user.id)
-    return redirect('/')
+    return redirect('/')@app.route('/profile', methods=['GET'])
+
+
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile() -> str:
+    """Retrieve the user's profile using the session_id cookie."""
+    session_id = request.cookies.get('session_id')
+    if session_id is None:
+        return (jsonify({"message": "session_id cookie is missing"}), 403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if user is None:
+        return (jsonify({"message": "session_id user not found"}), 403)
+
+    return jsonify({"email": user.email})
 
 
 if __name__ == "__main__":
